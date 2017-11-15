@@ -1,0 +1,87 @@
+﻿@{
+    Layout = "~/_Layout.cshtml";
+    Page.Title = "Add a Quote";
+
+    Validation.RequireField("Width", "You must enter a width");
+    Validation.RequireField("Height", "Height is required");
+    Validation.RequireField("Date", "You haven't entered a Date");
+    Validation.RequireField("Materials", "Choose a material");
+    Validation.RequireField("Drawers", "You haven't entered How many drawers");
+    Validation.RequireField("Name", "Please enter a name");
+    Validation.RequireField("Rush", "How fast do you want it?");
+
+    var width = "";
+    var height = "";
+    var date = "";
+    var materials = "";
+    var drawers = "";
+    var name = "";
+    var rush = "";
+
+
+    if (IsPost)
+    {
+        if (Validation.IsValid())
+        {
+            width = Request.Form["Width"];
+            height = Request.Form["Height"];
+            date = Request.Form["Date"];
+            materials = Request.Form["Materials"];
+            drawers = Request.Form["Drawers"];
+            name = Request.Form["Name"];
+            rush = Request.Form["Rush"];
+
+            var db = Database.Open("MegaDesk");
+            var insertCommand = "INSERT INTO Desk (Width, Height, Materials, Drawers, Name, Rush)VALUES(@0, @1, @2, @3, @4, @5)";
+            db.Execute(insertCommand, width, height, materials, drawers, name, rush);
+            Response.Redirect("~/MegaMind");
+
+            Response.Redirect("~/MegaMind");
+        }
+    }
+}
+
+<h2>Add a Quote</h2>
+@Html.ValidationSummary()
+<<form action method="get">
+    <fieldset>
+        @*Material Type <select id="material" name="material">*@
+
+                       <option value=""></option>
+            <option value="0">Oak</option>
+            <option value="1">Laminate</option>
+            <option value="2">Pine</option>
+            <option value="3">Rosewood</option>
+            <option value="4">Veneer</option>
+            <option selected="selected" value="2">Choose a material</option>
+            </select>
+        <br/>
+
+        RushOrder Type <select id="rush" name="rush">
+            <option value=""></option>
+            <option value="0">3 day rush</option>
+            <option value="1">5 day rush</option>
+            <option value="2">7 day rush</option>
+
+            <option selected="selected" value="2">Choose a Delivery option</option>
+        </select>
+        <br/>
+        Drawer Type <select id="drawer" name="drawer">
+            <option value=""></option>
+            <option value="0">1 Drawer</option>
+            <option value="1">2 Drawers</option>
+            <option value="2">3 Drawers</option>
+            <option value="3">1 Drawer</option>
+            <option value="4">2 Drawers</option>
+            <option value="5">3 Drawers</option>
+            <option value="6">2 Drawers</option>
+            <option value="7">3 Drawers</option>
+
+           <option selected="selected" value="2">How many drawers</option>
+        </select>
+        <br />
+
+            @*<p><input type="submit" value="Submit" /> </p>*@
+            <p><input type="submit" name="buttonSubmit" value="Add Quote" /></p>
+</fieldset>
+</form>

@@ -1,0 +1,127 @@
+﻿@{
+    Layout = "~/_Layout.cshtml";
+    Page.Title = "Edit a Quotes";
+
+    var width = "";
+    var height = "";
+    var date = DateTime.Now;
+    var materials = "";
+    var drawers = "";
+    var name = "";
+    var rush = "";
+    var deskId = "";
+
+    if (!IsPost)
+    {
+        if (!Request.QueryString["ID"].IsEmpty() && Request.QueryString["ID"].IsInt())
+        {
+            deskId = Request.QueryString["ID"];
+            var db = Database.Open("MegaDesk");
+            var dbCommand = "SELECT * FROM Desk WHERE ID = @0";
+            var row = db.QuerySingle(dbCommand, deskId);
+
+            if (row != null)
+            {
+                width = row.Width;
+                height = row.Height;
+                date = row.Date;
+                materials = row.Materials;
+                drawers = row.Drawers;
+                name = row.Names;
+                rush = row.Rush;
+            }
+            else
+            {
+                Validation.AddFormError("No Quotes was selected.");
+                // If you are using a version of ASP.NET Web Pages 2 that's
+                // earlier than the RC release, comment out the preceding
+                // statement and uncomment the following one.
+                //ModelState.AddFormError("No movie was selected.");
+            }
+        }
+        else
+        {
+            Validation.AddFormError("No Quotes was selected.");
+            // If you are using a version of ASP.NET Web Pages 2 that's
+            // earlier than the RC release, comment out the preceding
+            // statement and uncomment the following one.
+            //ModelState.AddFormError("No movie was selected.");
+        }
+    }
+
+    if (IsPost)
+    {
+        Validation.RequireField("Width", "You must enter a width");
+        Validation.RequireField("Height", "Height is required");
+        //Validation.RequireField("Date", "You haven't entered a Date");
+        Validation.RequireField("Materials", "Choose a material");
+        Validation.RequireField("Drawers", "You haven't entered How many drawers");
+        Validation.RequireField("Name", "Please enter a name");
+        Validation.RequireField("Rush", "How fast do you want it?");
+
+        width = Request.Form["width"];
+        height = Request.Form["height"];
+        //date = Request.Form["date"];
+        materials = Request.Form["materials"];
+        drawers = Request.Form["drawers"];
+        name = Request.Form["name"];
+        rush = Request.Form["rush"];
+
+        deskId = Request.Form["deskId"];
+
+        if (Validation.IsValid()){
+            var db = Database.Open("MegaDesk");
+            var updateCommand = "UPDATE Desk SET Width=@0, Height=@1, Materials=@2, Drawers=@3, Name=@4, Rush=@5 WHERE Id=@6";
+            db.Execute(updateCommand, width, height, materials, drawers, name, rush, deskId);
+            Response.Redirect("~/MegaMind");
+        }
+    }
+}
+
+<h2>Edit a Quote</h2>
+@Html.ValidationSummary()
+<form method="post">
+    <fieldset>
+        <legend>Quote Information</legend>
+
+        <p>
+            <label for="width">Width:</label>
+            <input type="text" name="width" value="@width" />
+            @Html.ValidationMessage("width")
+
+        <p>
+            <label for="height">Height:</label>
+            <input type="text" name="height" value="@height" />
+            @Html.ValidationMessage("height")
+
+            @*<p>
+                <label for="date">Date:</label>
+                <input type="text" name="date" value="@date" />
+                @Html.ValidationMessage("date")*@
+
+        <p>
+            <label for="materials">Materials:</label>
+            <input type="text" name="materials" value="@materials" />
+            @Html.ValidationMessage("materials")
+        <p>
+            <label for="drawers">Drawers:</label>
+            <input type="text" name="drawers" value="@drawers" />
+            @Html.ValidationMessage("drawers")
+
+        <p>
+            <label for="name">Name:</label>
+            <input type="text" name="name" value="@name" />
+            @Html.ValidationMessage("name")
+
+        <p>
+            <label for="rush">Rush:</label>
+            <input type="text" name="rush" value="@rush" />
+            @Html.ValidationMessage("rush")
+
+<p />
+        <input type="hidden" name="deskid" value="@deskId" />
+        <p><input type="submit" name="buttonSubmit" value="Submit Changes" /></p>
+
+    </fieldset>
+</form>
+<p><a href="~/MegaMind.cshtml">Return to Quote listing</a></p>

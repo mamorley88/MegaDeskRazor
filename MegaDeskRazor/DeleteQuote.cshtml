@@ -1,0 +1,99 @@
+﻿@{
+    Layout = "~/_Layout.cshtml";
+    Page.Title = "Delete a Quote";
+
+    var width = "";
+    var height = "";
+    var date = "";
+    var materials = "";
+    var drawers = "";
+    var name = "";
+    var rush = "";
+    var deskId = "";
+
+    if (!IsPost)
+    {
+        if (!Request.QueryString["ID"].IsEmpty() && Request.QueryString["ID"].AsInt() > 0)
+        {
+            deskId = Request.QueryString["ID"];
+            var db = Database.Open("MegaDesk");
+            var dbCommand = "SELECT * FROM Desk WHERE ID = @0";
+            var row = db.QuerySingle(dbCommand, deskId);
+            if (row != null)
+            {
+                width = row.Width;
+                height = row.Height;
+                materials = row.Materials;
+                drawers = row.drawers;
+                name = row.Name;
+                rush = row.Rush;
+
+            }
+            else
+            {
+                Validation.AddFormError("No Quote was found for that ID.");
+                // If you are using a version of ASP.NET Web Pages 2 that's
+                // earlier than the RC release, comment out the preceding
+                // statement and uncomment the following one.
+                //ModelState.AddFormError("No movie was found for that ID.");
+            }
+        }
+        else
+        {
+            Validation.AddFormError("No Quote was found for that ID.");
+            // If you are using a version of ASP.NET Web Pages 2 that's
+            // earlier than the RC release, comment out the preceding
+            // statement and uncomment the following one.
+            //ModelState.AddFormError("No movie was found for that ID.");
+        }
+    }
+
+    if (IsPost && !Request["buttonDelete"].IsEmpty())
+    {
+        deskId = Request.Form["deskId"];
+        var db = Database.Open("MegaDesk");
+        var deleteCommand = "DELETE FROM Desk WHERE ID = @0";
+        db.Execute(deleteCommand, deskId);
+        Response.Redirect("~/MegaMind");
+    }
+
+}
+
+<h2>Delete a Quote</h2>
+@Html.ValidationSummary()
+<p><a href="~/MegaMind.cshtml">Return to Quote listing</a></p>
+
+<form method="post">
+    <fieldset>
+        <legend>Quote Information</legend>
+
+        <p>
+            <span>Width:</span>
+                <span>@width</span>
+
+        <p>
+            <span>Height:</span>
+            <span>@height</span>
+
+        <p>
+            <span>Materials:</span>
+            <span>@materials</span>
+
+        <p>
+            <span>Drawers:</span>
+            <span>@drawers</span>
+
+        <p>
+            <span>Name:</span>
+            <span>@name</span>
+
+        <p>
+            <span>Rush:</span>
+            <span>@rush</span>
+        </p>
+
+        <input type="hidden" name="deskid" value="@deskId" />
+        <p><input type="submit" name="buttonDelete" value="Delete Quote" /></p>
+    </fieldset>
+    <p><a href="~/MegaMind.cshtml">Return to quote listing</a></p>
+</form>
