@@ -3,7 +3,7 @@
     Page.Title = "Edit a Quotes";
 
     var width = "";
-    var height = "";
+    var depth = "";
     var date = DateTime.Now;
     var materials = "";
     var drawers = "";
@@ -23,11 +23,11 @@
             if (row != null)
             {
                 width = row.Width;
-                height = row.Height;
+                depth = row.Depth;
                 date = row.Date;
                 materials = row.Materials;
                 drawers = row.Drawers;
-                name = row.Names;
+                name = row.Name;
                 rush = row.Rush;
             }
             else
@@ -52,15 +52,16 @@
     if (IsPost)
     {
         Validation.RequireField("Width", "You must enter a width");
-        Validation.RequireField("Height", "Height is required");
+        Validation.RequireField("Depth", "Height is required");
         //Validation.RequireField("Date", "You haven't entered a Date");
         Validation.RequireField("Materials", "Choose a material");
         Validation.RequireField("Drawers", "You haven't entered How many drawers");
         Validation.RequireField("Name", "Please enter a name");
         Validation.RequireField("Rush", "How fast do you want it?");
+        Validation.RequireField("deskid", "No desk ID was submitted");
 
         width = Request.Form["width"];
-        height = Request.Form["height"];
+        depth = Request.Form["depth"];
         //date = Request.Form["date"];
         materials = Request.Form["materials"];
         drawers = Request.Form["drawers"];
@@ -71,8 +72,8 @@
 
         if (Validation.IsValid()){
             var db = Database.Open("MegaDesk");
-            var updateCommand = "UPDATE Desk SET Width=@0, Height=@1, Materials=@2, Drawers=@3, Name=@4, Rush=@5 WHERE Id=@6";
-            db.Execute(updateCommand, width, height, materials, drawers, name, rush, deskId);
+            var updateCommand = "UPDATE Desk SET Width=@0, Depth=@1, Materials=@2, Drawers=@3, Name=@4, Rush=@5 WHERE Id=@6";
+            db.Execute(updateCommand, width, depth, materials, drawers, name, rush, deskId);
             Response.Redirect("~/MegaMind");
         }
     }
@@ -90,9 +91,9 @@
             @Html.ValidationMessage("width")
 
         <p>
-            <label for="height">Height:</label>
-            <input type="text" name="height" value="@height" />
-            @Html.ValidationMessage("height")
+            <label for="depth">Depth:</label>
+            <input type="text" name="depth" value="@depth" />
+            @Html.ValidationMessage("depth")
 
             @*<p>
                 <label for="date">Date:</label>

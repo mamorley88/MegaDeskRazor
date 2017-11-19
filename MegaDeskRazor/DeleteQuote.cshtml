@@ -3,7 +3,7 @@
     Page.Title = "Delete a Quote";
 
     var width = "";
-    var height = "";
+    var depth = "";
     var date = "";
     var materials = "";
     var drawers = "";
@@ -22,7 +22,7 @@
             if (row != null)
             {
                 width = row.Width;
-                height = row.Height;
+                depth = row.depth;
                 materials = row.Materials;
                 drawers = row.drawers;
                 name = row.Name;
@@ -72,8 +72,8 @@
                 <span>@width</span>
 
         <p>
-            <span>Height:</span>
-            <span>@height</span>
+            <span>Depth:</span>
+            <span>@depth</span>
 
         <p>
             <span>Materials:</span>

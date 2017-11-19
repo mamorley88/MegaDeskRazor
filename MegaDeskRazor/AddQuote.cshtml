@@ -2,86 +2,216 @@
     Layout = "~/_Layout.cshtml";
     Page.Title = "Add a Quote";
 
+
+
     Validation.RequireField("Width", "You must enter a width");
-    Validation.RequireField("Height", "Height is required");
-    Validation.RequireField("Date", "You haven't entered a Date");
+    Validation.RequireField("Depth", "Depth is required");
+
     Validation.RequireField("Materials", "Choose a material");
     Validation.RequireField("Drawers", "You haven't entered How many drawers");
     Validation.RequireField("Name", "Please enter a name");
     Validation.RequireField("Rush", "How fast do you want it?");
 
-    var width = "";
-    var height = "";
-    var date = "";
+    var width = "0";
+    var depth = "0";
+    var date = DateTime.Now;
     var materials = "";
-    var drawers = "";
+    var drawers = "";  //form count
     var name = "";
     var rush = "";
+    var prices = "Desk.cs";
+    var cost = ""; //cost form variable
+    var deskId = "";
+    var area = 0;
+    var addedcost = 0;
+    var totalcost = 0;
+    var rushcost = 0; //cost variable
+    var drawercost = 0;
+
 
 
     if (IsPost)
     {
         if (Validation.IsValid())
         {
+            name = Request.Form["Name"];
+
             width = Request.Form["Width"];
-            height = Request.Form["Height"];
-            date = Request.Form["Date"];
+            depth = Request.Form["Depth"];
             materials = Request.Form["Materials"];
             drawers = Request.Form["Drawers"];
-            name = Request.Form["Name"];
             rush = Request.Form["Rush"];
+            //Cost = Request.Form["Cost"];
+            //drawercost = calculateDrawers(drawers);
+            area = calculateTotalArea(width, depth);
+            addedcost = calculateAddedCost(area);
+            rushcost = calculateshipping(area, rush.AsInt());
+            // drawercost = calculateDrawers(drawers);
+            totalcost = calculatetotal(addedcost, rushcost);
+
+
+
+
 
             var db = Database.Open("MegaDesk");
-            var insertCommand = "INSERT INTO Desk (Width, Height, Materials, Drawers, Name, Rush)VALUES(@0, @1, @2, @3, @4, @5)";
-            db.Execute(insertCommand, width, height, materials, drawers, name, rush);
+            var insertCommand = "INSERT INTO Desk (Width, Depth, Materials, Date, Drawers, Name, Rush, Cost)VALUES(@0, @1, @2, @3, @4, @5, @6, @7)";
+            db.Execute(insertCommand, width, depth, date, materials, drawers, name, rush, totalcost);
             Response.Redirect("~/MegaMind");
 
-            Response.Redirect("~/MegaMind");
         }
     }
+
+    List<SelectListItem> listRushOrder = new List<SelectListItem>();
+    listRushOrder.Add(new SelectListItem { Text = "14 Day", Value = "14" });
+    listRushOrder.Add(new SelectListItem { Text = "7 Day", Value = "7" });
+    listRushOrder.Add(new SelectListItem { Text = "5 Day", Value = "5" });
+    listRushOrder.Add(new SelectListItem { Text = "3 Day", Value = "3" });
+
+
+    List<SelectListItem> listMaterials = new List<SelectListItem>();
+    listMaterials.Add(new SelectListItem { Text = "Pine", Value = "100" });
+    listMaterials.Add(new SelectListItem { Text = "Laminate", Value = "100" });
+    listMaterials.Add(new SelectListItem { Text = "Veneer", Value = "125" });
+    listMaterials.Add(new SelectListItem { Text = "Oak", Value = "200" });
+    listMaterials.Add(new SelectListItem { Text = "Rosewood", Value = "300" });
+
+
+
 }
+
+
+@functions{
+    public static int calculateAddedCost(int area)
+    {
+        int price = 0;
+        if (area > 1000)
+        {
+            price = (1 * (area - 1000));
+
+        }
+
+        return price;
+    }
+    public static int calculateTotalArea(string w, string D)
+    {
+        int area = 0;
+        area = Convert.ToInt32(w) * Convert.ToInt32(D);
+
+
+        return area;
+    }
+    public static int calculatetotal(int addedcost, int rushcost)
+    {
+        var total = 200 + addedcost + rushcost;
+
+        return total;
+    }
+    public static int calculateshipping(int area, int rush) {
+
+        var cost = 0;
+
+        switch(rush){
+            case 14:
+                cost = 0;
+                break;
+            case 3:
+                cost = 70;
+                if(area < 1000)
+                {
+                    cost = cost - 10;
+                }
+                else if(area >= 2000)
+                {
+                    cost = cost + 10;
+
+                }
+                break;
+            case 5 :
+                cost = 50;
+                if (area < 1000)
+                {
+                    cost = cost - 10;
+                }
+                else if (area >= 2000)
+                {
+                    cost = cost + 10;
+
+                }
+                break;
+            case 7:
+                cost = 35;
+                if (area < 1000)
+                {
+                    cost = cost - 5;
+                }
+                else if (area >= 2000)
+                {
+                    cost = cost + 5;
+
+                }
+                break;
+        }
+
+        return cost;
+    }
+   // public static int calculateDrawers(string drawers)
+    //{
+    //    drawers = 0;
+    //    drawers = Convert.ToInt32(drawers) * 50
+    //    drawercost = (drawers * 50);
+
+
+    //    return drawercost;
+    }
+    }
+
 
 <h2>Add a Quote</h2>
 @Html.ValidationSummary()
-<<form action method="get">
+<<form method="post">
     <fieldset>
-        @*Material Type <select id="material" name="material">*@
+        <legend>Quote Information</legend>
+        <p>
+            <label for="name">Name:</label>
+            <input type="text" name="name" value="@Request.Form["name"]" />
+            @Html.ValidationMessage("name")
 
-                       <option value=""></option>
-            <option value="0">Oak</option>
-            <option value="1">Laminate</option>
-            <option value="2">Pine</option>
-            <option value="3">Rosewood</option>
-            <option value="4">Veneer</option>
-            <option selected="selected" value="2">Choose a material</option>
-            </select>
-        <br/>
+       
+        <p>
+            <label for="width">Width:</label>
+            <input type="number" name="width" value="@Request.Form["width"]" min="24" max="96" size="2" maxlength="2" />
+            @Html.ValidationMessage("width")
 
-        RushOrder Type <select id="rush" name="rush">
-            <option value=""></option>
-            <option value="0">3 day rush</option>
-            <option value="1">5 day rush</option>
-            <option value="2">7 day rush</option>
+        <p>
+            <label for="depth">Depth:</label>
+            <input type="number" name="depth" value="@Request.Form["depth"]"  min="12" max="48" size="2" maxlength="2"/>
+            @Html.ValidationMessage("depth")
 
-            <option selected="selected" value="2">Choose a Delivery option</option>
-        </select>
-        <br/>
-        Drawer Type <select id="drawer" name="drawer">
-            <option value=""></option>
-            <option value="0">1 Drawer</option>
-            <option value="1">2 Drawers</option>
-            <option value="2">3 Drawers</option>
-            <option value="3">1 Drawer</option>
-            <option value="4">2 Drawers</option>
-            <option value="5">3 Drawers</option>
-            <option value="6">2 Drawers</option>
-            <option value="7">3 Drawers</option>
+        <p>
+            <label for="materials">Materials:</label>
+            @Html.DropDownList("materials", null, listMaterials, Request.Form["materials"], null)
+            @Html.ValidationMessage("materials")
+        <p>
+            <label for="drawers">Drawers:</label>
+            <input type="number" name="drawers" value="@Request.Form["drawers"]"  min="0" max="7" size="1" maxlength="1"/>
+            @Html.ValidationMessage("drawers")
 
-           <option selected="selected" value="2">How many drawers</option>
-        </select>
-        <br />
+        <p>
+            <label for="rush">Rush:</label>            
+            @Html.DropDownList("Rush", null, listRushOrder, Request.Form["rush"], null)
+            @Html.ValidationMessage("rush")
 
-            @*<p><input type="submit" value="Submit" /> </p>*@
-            <p><input type="submit" name="buttonSubmit" value="Add Quote" /></p>
-</fieldset>
+        <p />
+
+
+
+
+        @*<input type="hidden" name="deskid" value="@deskId" />*@
+        <p><input type="submit" name="buttonSubmit" value="Add Quote" /></p>
+
+
+
+    </fieldset>
+    <p><a href="~/MegaMind.cshtml">Return to quote listing</a></p>
 </form>
+

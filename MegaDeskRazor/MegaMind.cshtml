@@ -42,14 +42,16 @@
         headerStyle: "head",
         alternatingRowStyle: "alt",
         columns: grid.Columns(
-            grid.Column(format: @<a href="~/EditQuote.cshtml">Edit</a>),
+            grid.Column(format: @<a href="~/EditQuote.cshtml?id=@item.ID">Edit</a>),
+            grid.Column("Name"),
+            grid.Column("Date"),
             grid.Column("Width"),
-            grid.Column("Height"),
+            grid.Column("Depth"),
             grid.Column("Materials"),
             grid.Column("Drawers", null, null, null, false),
-            grid.Column("Name"),
             grid.Column("Rush"),
-            grid.Column("Date"),
+             grid.Column("Cost"),
+
             grid.Column(format: @<a href="~/DeleteQuote.cshtml?id=@item.ID">Delete</a>)
        )
     )
