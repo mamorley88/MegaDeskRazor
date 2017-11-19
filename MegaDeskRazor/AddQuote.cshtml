@@ -3,13 +3,13 @@
     Page.Title = "Add a Quote";
 
 
-
+    Validation.RequireField("Name", "Please enter a name");
     Validation.RequireField("Width", "You must enter a width");
     Validation.RequireField("Depth", "Depth is required");
 
     Validation.RequireField("Materials", "Choose a material");
     Validation.RequireField("Drawers", "You haven't entered How many drawers");
-    Validation.RequireField("Name", "Please enter a name");
+
     Validation.RequireField("Rush", "How fast do you want it?");
 
     var width = "0";
@@ -55,7 +55,7 @@
 
             var db = Database.Open("MegaDesk");
             var insertCommand = "INSERT INTO Desk (Width, Depth, Materials, Date, Drawers, Name, Rush, Cost)VALUES(@0, @1, @2, @3, @4, @5, @6, @7)";
-            db.Execute(insertCommand, width, depth, date, materials, drawers, name, rush, totalcost);
+            db.Execute(insertCommand, width, depth, materials, date, drawers, name, rush, totalcost);
             Response.Redirect("~/MegaMind");
 
         }

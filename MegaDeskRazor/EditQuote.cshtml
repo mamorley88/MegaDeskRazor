@@ -24,7 +24,7 @@
             {
                 width = row.Width;
                 depth = row.Depth;
-                date = row.Date;
+                //date = row.Date;
                 materials = row.Materials;
                 drawers = row.Drawers;
                 name = row.Name;
@@ -53,7 +53,6 @@
     {
         Validation.RequireField("Width", "You must enter a width");
         Validation.RequireField("Depth", "Height is required");
-        //Validation.RequireField("Date", "You haven't entered a Date");
         Validation.RequireField("Materials", "Choose a material");
         Validation.RequireField("Drawers", "You haven't entered How many drawers");
         Validation.RequireField("Name", "Please enter a name");
@@ -62,7 +61,7 @@
 
         width = Request.Form["width"];
         depth = Request.Form["depth"];
-        //date = Request.Form["date"];
+
         materials = Request.Form["materials"];
         drawers = Request.Form["drawers"];
         name = Request.Form["name"];
@@ -72,8 +71,8 @@
 
         if (Validation.IsValid()){
             var db = Database.Open("MegaDesk");
-            var updateCommand = "UPDATE Desk SET Width=@0, Depth=@1, Materials=@2, Drawers=@3, Name=@4, Rush=@5 WHERE Id=@6";
-            db.Execute(updateCommand, width, depth, materials, drawers, name, rush, deskId);
+            var updateCommand = "UPDATE Desk SET Width=@0, Depth=@1, Materials=@2, Date=@3, Drawers=@4, Name=@5, Rush=@6 WHERE Id=@7";
+            db.Execute(updateCommand, width, depth, materials, date, drawers, name, rush, deskId);
             Response.Redirect("~/MegaMind");
         }
     }
@@ -86,38 +85,36 @@
         <legend>Quote Information</legend>
 
         <p>
+            <label for="name">Name:</label>
+            <input type="text" name="name" value="@Request.Form["name"]" />
+            @Html.ValidationMessage("name")
+
+       
+        <p>
             <label for="width">Width:</label>
-            <input type="text" name="width" value="@width" />
+            <input type="number" name="width" value="@Request.Form["width"]" min="24" max="96" size="2" maxlength="2" />
             @Html.ValidationMessage("width")
 
         <p>
             <label for="depth">Depth:</label>
-            <input type="text" name="depth" value="@depth" />
+            <input type="number" name="depth" value="@Request.Form["depth"]"  min="12" max="48" size="2" maxlength="2"/>
             @Html.ValidationMessage("depth")
-
-            @*<p>
-                <label for="date">Date:</label>
-                <input type="text" name="date" value="@date" />
-                @Html.ValidationMessage("date")*@
 
         <p>
             <label for="materials">Materials:</label>
-            <input type="text" name="materials" value="@materials" />
+            <input type="text" name="materials" value="@Request.Form["materials"]" />
             @Html.ValidationMessage("materials")
         <p>
             <label for="drawers">Drawers:</label>
-            <input type="text" name="drawers" value="@drawers" />
+            <input type="number" name="drawers" value="@Request.Form["drawers"]"  min="0" max="7" size="1" maxlength="1"/>
             @Html.ValidationMessage("drawers")
 
         <p>
-            <label for="name">Name:</label>
-            <input type="text" name="name" value="@name" />
-            @Html.ValidationMessage("name")
-
-        <p>
-            <label for="rush">Rush:</label>
-            <input type="text" name="rush" value="@rush" />
+            <label for="rush">Rush:</label>            
+            <input type="text" name="rush" value="@Request.Form["rush"]" />
             @Html.ValidationMessage("rush")
+
+        <p />
 
 <p />
         <input type="hidden" name="deskid" value="@deskId" />

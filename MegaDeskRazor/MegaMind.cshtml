@@ -19,7 +19,7 @@
     }
 
     var selectedData = db.Query(selectCommand, searchTerm);
-    var grid = new WebGrid(source: selectedData, defaultSort: "Materials", rowsPerPage: 5);
+    var grid = new WebGrid(source: selectedData, defaultSort: "Name", rowsPerPage: 5);
 }
 <h2>List Quotes</h2>
 <form method="get">
